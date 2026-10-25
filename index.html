@@ -1,1 +1,680 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bhiwani District | Chhoti Kashi | Haryana</title>
+  <meta name="description" content="Official-style landing page of Bhiwani District, Haryana – history, geography, demographics, tourism, sports and administration.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0f4c81;
+      --primary-dark: #0a355a;
+      --accent: #e67e22;
+      --light: #f8fafc;
+      --dark: #1e293b;
+      --gray: #64748b;
+      --white: #ffffff;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--dark);
+      line-height: 1.6;
+      background: var(--light);
+    }
+
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    header {
+      background: var(--white);
+      box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    .menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--primary);
+    }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, rgba(15,76,129,0.92), rgba(10,53,90,0.88)),
+                  url('https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1600&q=80') center/cover;
+      color: white;
+      padding: 120px 0 100px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .hero .subtitle {
+      font-size: 1.25rem;
+      opacity: 0.95;
+      margin-bottom: 12px;
+      font-weight: 400;
+    }
+
+    .hero .tagline {
+      font-size: 1.1rem;
+      background: rgba(255,255,255,0.15);
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 50px;
+      margin-top: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 50px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    /* Sections */
+    section {
+      padding: 80px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .section-title h2 {
+      font-size: 2.4rem;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    .section-title p {
+      color: var(--gray);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+    }
+
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+
+    .card h3 {
+      color: var(--primary);
+      margin-bottom: 12px;
+      font-size: 1.3rem;
+    }
+
+    .card p {
+      color: var(--gray);
+      font-size: 0.95rem;
+    }
+
+    /* About */
+    .about-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      align-items: center;
+    }
+
+    .about-text p {
+      margin-bottom: 16px;
+      color: var(--gray);
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 30px;
+      border-radius: var(--radius);
+      margin-top: 24px;
+    }
+
+    .highlight-box h4 {
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+
+    /* Facts */
+    .facts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .fact-item {
+      background: white;
+      padding: 24px;
+      border-radius: var(--radius);
+      text-align: center;
+      box-shadow: var(--shadow);
+      border-top: 4px solid var(--accent);
+    }
+
+    .fact-item .value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .fact-item .label {
+      font-size: 0.9rem;
+      color: var(--gray);
+      margin-top: 6px;
+    }
+
+    /* Tourism */
+    .place-card {
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .place-card .img-placeholder {
+      height: 180px;
+      background: linear-gradient(45deg, #0f4c81, #e67e22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .place-card .content {
+      padding: 22px;
+    }
+
+    /* Sports */
+    .sports-banner {
+      background: linear-gradient(135deg, #0f4c81, #1a6bb5);
+      color: white;
+      padding: 50px;
+      border-radius: var(--radius);
+      text-align: center;
+    }
+
+    .sports-banner h3 {
+      font-size: 1.8rem;
+      margin-bottom: 16px;
+    }
+
+    /* Contact */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    .contact-card {
+      background: white;
+      padding: 28px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .contact-card i {
+      font-size: 2rem;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .contact-card h4 {
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--primary-dark);
+      color: white;
+      padding: 50px 0 25px;
+      text-align: center;
+    }
+
+    footer a {
+      color: #93c5fd;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      .menu-btn {
+        display: block;
+      }
+      .about-content {
+        grid-template-columns: 1fr;
+      }
+      .hero {
+        padding: 90px 0 70px;
+      }
+      .hero-stats {
+        gap: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container nav">
+      <div class="logo">
+        Bhiwani <span>District</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#history">History</a></li>
+        <li><a href="#facts">At a Glance</a></li>
+        <li><a href="#tourism">Tourism</a></li>
+        <li><a href="#sports">Sports</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="menu-btn" aria-label="Menu">☰</button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <p class="subtitle">District of Haryana, India</p>
+      <h1>Bhiwani District</h1>
+      <p class="tagline">Chhoti Kashi • City of Temples • Nursery of Boxers</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-number">1972</div>
+          <div class="stat-label">Established</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">~3,432 km²</div>
+          <div class="stat-label">Area (post-2016)</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">124 km</div>
+          <div class="stat-label">from New Delhi</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">4</div>
+          <div class="stat-label">Sub-Divisions</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="container">
+      <div class="section-title">
+        <h2>About the District</h2>
+        <p>One of the 22 districts of Haryana, known for its rich cultural heritage, spiritual significance and sporting excellence.</p>
+      </div>
+      <div class="about-content">
+        <div class="about-text">
+          <p>Bhiwani district was created on <strong>22 December 1972</strong>. It is named after its headquarters, Bhiwani city. According to local tradition, the city was founded by a Rajput named Neem Singh after his wife Bhani. The name evolved from Bhani → Bhiyani → Bhiwani.</p>
+          <p>People fondly call it <strong>Chhoti Kashi</strong> (Little Varanasi) because of the large number of temples found in almost every second or third lane.</p>
+          <p>It has been an important centre of regional politics and is the hometown of three former Chief Ministers of Haryana: Bansi Lal, Banarsi Das Gupta and Hukum Singh.</p>
+          <div class="highlight-box">
+            <h4>Location</h4>
+            <p>Situated between 28.19°–29.05° N latitude and 75.26°–76.28° E longitude. It is 124 km from the national capital New Delhi and approximately 285–295 km from the state capital Chandigarh.</p>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <h3>Administrative Setup</h3>
+            <p><strong>Sub-Divisions:</strong> Bhiwani, Loharu, Tosham, Siwani</p>
+            <p><strong>Tehsils:</strong> Bhiwani, Bawani Khera, Loharu, Tosham, Siwani</p>
+            <p><strong>Sub-Tehsil:</strong> Behal</p>
+            <p style="margin-top:14px;">In 2016, Charkhi Dadri was carved out as a separate district from Bhiwani.</p>
+          </div>
+          <div class="card" style="margin-top:20px;">
+            <h3>Geography</h3>
+            <p>The district has a semi-arid climate. Northern parts have alluvial plains while the southern region is semi-desert with remnants of the Aravalli range (especially around Tosham Hills). Major crops include wheat, mustard, bajra and cotton.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- History -->
+  <section id="history" style="background: #f1f5f9;">
+    <div class="container">
+      <div class="section-title">
+        <h2>History & Heritage</h2>
+        <p>Evidence of continuous human settlement from pre-Harappan times to the modern era.</p>
+      </div>
+      <div class="card-grid">
+        <div class="card">
+          <h3>Ancient Period</h3>
+          <p>Pre-Indus Valley Civilization remains (mines, smelting sites and houses) have been found at Khanak hills in the Tosham Hill range. Excavations at Mitathal (1968–73 & 1980–86) revealed pre-Harappan and Harappan (Indus Valley) culture.</p>
+        </div>
+        <div class="card">
+          <h3>Medieval & Mughal Era</h3>
+          <p>Bhiwani is mentioned in the Ain-i-Akbari and served as a prominent commercial centre during the Mughal period. The Fort of Loharu was built in 1570 AD by Arjan Singh, a Hindu Rajput.</p>
+        </div>
+        <div class="card">
+          <h3>British Period</h3>
+          <p>In 1809 Bhiwani was annexed by the British from the Marathas. In 1817 William Frazer established a mandi (grain market), which helped the town emerge as a major regional trading hub.</p>
+        </div>
+        <div class="card">
+          <h3>Modern District</h3>
+          <p>Formed on 22 December 1972 by integrating territories previously under Hisar and Mahendragarh. In December 2016, Charkhi Dadri was carved out as a separate district.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- At a Glance -->
+  <section id="facts">
+    <div class="container">
+      <div class="section-title">
+        <h2>District at a Glance</h2>
+        <p>Key facts based on official and Census 2011 data (pre- and post-reorganisation figures noted where relevant).</p>
+      </div>
+      <div class="facts-grid">
+        <div class="fact-item">
+          <div class="value">22 Dec 1972</div>
+          <div class="label">Date of Creation</div>
+        </div>
+        <div class="fact-item">
+          <div class="value">~3,432 km²</div>
+          <div class="label">Present Area</div>
+        </div>
+        <div class="fact-item">
+          <div class="value">1.63 million+</div>
+          <div class="label">Population (2011)*</div>
+        </div>
+        <div class="fact-item">
+          <div class="value">75.21%</div>
+          <div class="label">Literacy Rate (2011)</div>
+        </div>
+        <div class="fact-item">
+          <div class="value">886</div>
+          <div class="label">Sex Ratio (2011)</div>
+        </div>
+        <div class="fact-item">
+          <div class="value">4</div>
+          <div class="label">Sub-Divisions</div>
+        </div>
+        <div class="fact-item">
+          <div class="value">5 + 1</div>
+          <div class="label">Tehsils + Sub-Tehsil</div>
+        </div>
+        <div class="fact-item">
+          <div class="value">124 km</div>
+          <div class="label">Distance from Delhi</div>
+        </div>
+      </div>
+      <p style="text-align:center; margin-top:30px; color:var(--gray); font-size:0.9rem;">
+        * Population figure refers to the undivided district as per Census 2011. After the creation of Charkhi Dadri district in 2016, the population of present-day Bhiwani is lower.
+      </p>
+    </div>
+  </section>
+
+  <!-- Tourism -->
+  <section id="tourism" style="background: #f1f5f9;">
+    <div class="container">
+      <div class="section-title">
+        <h2>Tourism & Places of Interest</h2>
+        <p>Temples, historical sites, hills and parks that make Bhiwani a unique destination.</p>
+      </div>
+      <div class="card-grid">
+        <div class="card place-card">
+          <div class="img-placeholder">Star Monument</div>
+          <div class="content">
+            <h3>Star Monument (Dinod)</h3>
+            <p>Samadhi of Param Sant Tarachandji Maharaj. Beautiful architecture set against the backdrop of the Tosham Hills – a popular spot for photography and short treks.</p>
+          </div>
+        </div>
+        <div class="card place-card">
+          <div class="img-placeholder">Temples</div>
+          <div class="content">
+            <h3>Temples of Bhiwani</h3>
+            <p>Known as Chhoti Kashi. Notable temples include Hari Har Temple, Jogiwala Mandir, Gauri Shankar (Kirorimal) Temple, Devsar Dham, Hanuman Gate Temple and many others.</p>
+          </div>
+        </div>
+        <div class="card place-card">
+          <div class="img-placeholder">Loharu Fort</div>
+          <div class="content">
+            <h3>Fort of Loharu</h3>
+            <p>Built in 1570 AD by Arjan Singh. An important historical landmark reflecting the Rajput heritage of the region.</p>
+          </div>
+        </div>
+        <div class="card place-card">
+          <div class="img-placeholder">Tosham Hills</div>
+          <div class="content">
+            <h3>Tosham Hills & Naurangabad</h3>
+            <p>Ancient habitation sites and scenic rocky hills. Archaeological remains from Kushan, Gupta and earlier periods have been found near Naurangabad.</p>
+          </div>
+        </div>
+        <div class="card place-card">
+          <div class="img-placeholder">Parks</div>
+          <div class="content">
+            <h3>Nehru Park & City Parks</h3>
+            <p>Popular green spaces for morning walks, family outings and recreation in the heart of Bhiwani city.</p>
+          </div>
+        </div>
+        <div class="card place-card">
+          <div class="img-placeholder">Mitathal</div>
+          <div class="content">
+            <h3>Mitathal Excavation Site</h3>
+            <p>Important Indus Valley Civilization site that has yielded pre-Harappan and Harappan artefacts.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sports -->
+  <section id="sports">
+    <div class="container">
+      <div class="section-title">
+        <h2>Sports Capital of Haryana</h2>
+        <p>Bhiwani is famously known as the “Nursery of Boxers” and has produced several national and international sportspersons.</p>
+      </div>
+      <div class="sports-banner">
+        <h3>Boxing & Wrestling Powerhouse</h3>
+        <p style="max-width:700px; margin:0 auto 20px;">
+          The Bhiwani Boxing Club and local akharas have produced Olympic and Commonwealth Games medallists. Notable names include Vijender Singh, Geeta Phogat, and many other boxers and wrestlers who have brought glory to India.
+        </p>
+        <p>The district is also known as the “City of War Heroes” for the large number of brave soldiers it has contributed to the Indian Armed Forces.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Economy -->
+  <section style="background: #f1f5f9;">
+    <div class="container">
+      <div class="section-title">
+        <h2>Economy & Livelihood</h2>
+      </div>
+      <div class="card-grid">
+        <div class="card">
+          <h3>Agriculture</h3>
+          <p>Primary occupation of the majority of the population. Major crops: Wheat, Mustard (Sarson), Bajra, Cotton and Gram. The climate is semi-arid with average annual rainfall around 450–500 mm.</p>
+        </div>
+        <div class="card">
+          <h3>Trade & Industry</h3>
+          <p>Historically an important commercial centre. Present-day activities include small-scale industries, brick kilns, cotton-related trade and public administration.</p>
+        </div>
+        <div class="card">
+          <h3>Education & Services</h3>
+          <p>Growing educational institutions and government services form an important part of the local economy.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="container">
+      <div class="section-title">
+        <h2>Administration & Contact</h2>
+        <p>Key contacts of the District Administration</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-card">
+          <h4>Deputy Commissioner</h4>
+          <p>Sh. Sahil Gupta, IAS</p>
+          <p style="margin-top:10px;">Mini Secretariat, Bhiwani</p>
+          <p>Phone: 01664-243535</p>
+          <p>Email: dcbhw[at]hry[dot]nic[dot]in</p>
+        </div>
+        <div class="contact-card">
+          <h4>Official Website</h4>
+          <p style="margin-top:10px;">
+            <a href="https://bhiwani.gov.in" target="_blank" style="color:var(--primary); font-weight:600;">bhiwani.gov.in</a>
+          </p>
+          <p style="margin-top:12px; font-size:0.9rem; color:var(--gray);">
+            Source of official notifications, schemes and district information.
+          </p>
+        </div>
+        <div class="contact-card">
+          <h4>Emergency Helplines</h4>
+          <p>Police: 100 / 112</p>
+          <p>Fire: 101</p>
+          <p>Women Helpline: 1091</p>
+          <p>Child Helpline: 1098</p>
+          <p>Road Accident: 1073</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <h3 style="margin-bottom:12px;">Bhiwani District</h3>
+      <p>Chhoti Kashi • Land of Temples & Champions</p>
+      <div class="footer-links">
+        <a href="https://bhiwani.gov.in" target="_blank">Official Website</a>
+        <a href="https://haryanatourism.gov.in" target="_blank">Haryana Tourism</a>
+        <a href="https://www.haryana.gov.in" target="_blank">Haryana Government</a>
+      </div>
+      <p style="margin-top:30px; font-size:0.85rem; opacity:0.8;">
+        Information compiled from official sources (bhiwani.gov.in), Census of India 2011, Haryana Tourism and Wikipedia.<br>
+        This is an independent informational landing page and not an official government website.
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
