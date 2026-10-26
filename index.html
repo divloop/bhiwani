@@ -4,11 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PDF Dark Area Cleaner – Save Ink</title>
-
-  <!-- Load libraries with defer so they don't block -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js" defer></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
   <style>
     :root {
       --primary: #2563eb;
@@ -53,8 +50,6 @@
       box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
       margin-bottom: 1.5rem;
     }
-
-    /* ===== UPLOAD ZONE ===== */
     .upload-zone {
       border: 2px dashed #94a3b8;
       border-radius: 10px;
@@ -64,7 +59,6 @@
       transition: all 0.2s;
       background: #f1f5f9;
       user-select: none;
-      display: block;          /* important for label */
     }
     .upload-zone:hover,
     .upload-zone.dragover {
@@ -76,9 +70,8 @@
       margin-bottom: 0.75rem;
     }
     #fileInput {
-      display: none !important;
+      display: none;
     }
-
     .btn {
       display: inline-flex;
       align-items: center;
@@ -105,14 +98,13 @@
       border: 1px solid var(--border);
     }
     .btn-secondary:hover { background: #f1f5f9; }
-
     .controls {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 1rem;
       margin-top: 1.5rem;
     }
-    label.control-label {
+    label {
       display: block;
       font-size: 0.875rem;
       font-weight: 500;
@@ -127,8 +119,10 @@
       color: var(--primary);
       font-weight: 600;
     }
-
-    .progress-section { display: none; margin-top: 1.5rem; }
+    .progress-section {
+      display: none;
+      margin-top: 1.5rem;
+    }
     .progress-bar {
       height: 10px;
       background: #e2e8f0;
@@ -142,9 +136,14 @@
       width: 0%;
       transition: width 0.25s;
     }
-    .status { font-size: 0.95rem; color: var(--muted); }
-
-    .preview { display: none; margin-top: 1.5rem; }
+    .status {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+    .preview {
+      display: none;
+      margin-top: 1.5rem;
+    }
     .preview-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -197,15 +196,6 @@
       margin-top: 1rem;
       line-height: 1.45;
     }
-    .error-box {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #b91c1c;
-      padding: 1rem;
-      border-radius: 8px;
-      margin-top: 1rem;
-      display: none;
-    }
   </style>
 </head>
 <body>
@@ -216,26 +206,26 @@
     </header>
 
     <div class="card">
-      <!-- Native label is the most reliable way to open the file picker -->
+      <!-- File input is OUTSIDE the drop zone (this was the bug) -->
       <input type="file" id="fileInput" accept="application/pdf" />
 
-      <label for="fileInput" class="upload-zone" id="dropZone">
+      <div class="upload-zone" id="dropZone">
         <div class="icon">📄</div>
         <p style="font-weight: 600; margin-bottom: 0.3rem;">Drop a PDF here or click to upload</p>
         <p style="font-size: 0.9rem; color: var(--muted);">Works best with textbooks, notes & printed materials that have solid dark bands</p>
-      </label>
+      </div>
 
       <div class="controls">
         <div>
-          <label class="control-label">Darkness threshold <span class="value" id="threshVal">55</span></label>
+          <label>Darkness threshold <span class="value" id="threshVal">55</span></label>
           <input type="range" id="threshold" min="20" max="120" value="55" />
         </div>
         <div>
-          <label class="control-label">Min region size (px²) <span class="value" id="areaVal">800</span></label>
+          <label>Min region size (px²) <span class="value" id="areaVal">800</span></label>
           <input type="range" id="minArea" min="200" max="5000" step="100" value="800" />
         </div>
         <div>
-          <label class="control-label">Render quality</label>
+          <label>Render quality</label>
           <select id="scale">
             <option value="1.5">Fast (1.5×)</option>
             <option value="2" selected>Balanced (2×)</option>
@@ -248,8 +238,6 @@
       <div class="info">
         <strong>How it works:</strong> Each page is rendered → large solid dark regions are detected via connected components → those regions are filled white → a new PDF is built. Text and thin lines are preserved because they form small components.
       </div>
-
-      <div class="error-box" id="errorBox"></div>
     </div>
 
     <div class="card progress-section" id="progressSection">
@@ -278,286 +266,277 @@
     </div>
 
     <footer>
-      Client-side only • Your files never leave the browser
+      Client-side only • Your files never leave the browser • Hosted on GitHub Pages
     </footer>
   </div>
 
   <script>
-    // Wait until the page and deferred scripts are ready
-    document.addEventListener("DOMContentLoaded", () => {
-      const dropZone        = document.getElementById("dropZone");
-      const fileInput       = document.getElementById("fileInput");
-      const thresholdSlider = document.getElementById("threshold");
-      const minAreaSlider   = document.getElementById("minArea");
-      const scaleSelect     = document.getElementById("scale");
-      const progressSection = document.getElementById("progressSection");
-      const progressFill    = document.getElementById("progressFill");
-      const statusText      = document.getElementById("statusText");
-      const pageStatus      = document.getElementById("pageStatus");
-      const previewSection  = document.getElementById("previewSection");
-      const origPreview     = document.getElementById("origPreview");
-      const cleanPreview    = document.getElementById("cleanPreview");
-      const statsBox        = document.getElementById("statsBox");
-      const downloadBtn     = document.getElementById("downloadBtn");
-      const resetBtn        = document.getElementById("resetBtn");
-      const errorBox        = document.getElementById("errorBox");
+    // Configure PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.js";
 
-      let cleanedPdfBytes = null;
-      let currentFileName = "cleaned.pdf";
+    const dropZone   = document.getElementById("dropZone");
+    const fileInput  = document.getElementById("fileInput");
+    const thresholdSlider = document.getElementById("threshold");
+    const minAreaSlider   = document.getElementById("minArea");
+    const scaleSelect     = document.getElementById("scale");
+    const progressSection = document.getElementById("progressSection");
+    const progressFill    = document.getElementById("progressFill");
+    const statusText      = document.getElementById("statusText");
+    const pageStatus      = document.getElementById("pageStatus");
+    const previewSection  = document.getElementById("previewSection");
+    const origPreview     = document.getElementById("origPreview");
+    const cleanPreview    = document.getElementById("cleanPreview");
+    const statsBox        = document.getElementById("statsBox");
+    const downloadBtn     = document.getElementById("downloadBtn");
+    const resetBtn        = document.getElementById("resetBtn");
 
-      // Live value updates
-      thresholdSlider.addEventListener("input", () => {
-        document.getElementById("threshVal").textContent = thresholdSlider.value;
-      });
-      minAreaSlider.addEventListener("input", () => {
-        document.getElementById("areaVal").textContent = minAreaSlider.value;
-      });
+    let cleanedPdfBytes = null;
+    let currentFileName = "cleaned.pdf";
 
-      // ===== DRAG & DROP =====
-      ["dragenter", "dragover"].forEach(eventName => {
-        dropZone.addEventListener(eventName, (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          dropZone.classList.add("dragover");
-        });
-      });
+    // Live value display
+    thresholdSlider.oninput = () => document.getElementById("threshVal").textContent = thresholdSlider.value;
+    minAreaSlider.oninput   = () => document.getElementById("areaVal").textContent   = minAreaSlider.value;
 
-      ["dragleave", "drop"].forEach(eventName => {
-        dropZone.addEventListener(eventName, (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          dropZone.classList.remove("dragover");
-        });
-      });
+    // ===== FIXED CLICK + DRAG & DROP =====
+    dropZone.addEventListener("click", () => {
+      fileInput.click();
+    });
 
-      dropZone.addEventListener("drop", (e) => {
-        const files = e.dataTransfer.files;
-        if (files && files.length > 0) {
-          handleFile(files[0]);
-        }
-      });
-
-      // File selected via click (label) or drag
-      fileInput.addEventListener("change", () => {
-        if (fileInput.files && fileInput.files.length > 0) {
-          handleFile(fileInput.files[0]);
-        }
-      });
-
-      // Reset
-      resetBtn.addEventListener("click", () => {
-        progressSection.style.display = "none";
-        previewSection.style.display = "none";
-        errorBox.style.display = "none";
-        downloadBtn.disabled = true;
-        cleanedPdfBytes = null;
-        fileInput.value = "";
-      });
-
-      // Download
-      downloadBtn.addEventListener("click", () => {
-        if (!cleanedPdfBytes) return;
-        const blob = new Blob([cleanedPdfBytes], { type: "application/pdf" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = currentFileName.replace(/\.pdf$/i, "") + "_cleaned.pdf";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      });
-
-      function showError(msg) {
-        errorBox.style.display = "block";
-        errorBox.textContent = msg;
-        progressSection.style.display = "none";
-      }
-
-      async function handleFile(file) {
-        errorBox.style.display = "none";
-
-        if (!file || file.type !== "application/pdf") {
-          showError("Please select a valid PDF file.");
-          return;
-        }
-
-        // Check if libraries loaded
-        if (typeof pdfjsLib === "undefined" || typeof PDFLib === "undefined") {
-          showError("Required libraries failed to load. Please check your internet connection or try using a local server (see instructions below).");
-          return;
-        }
-
-        // Configure worker (must be done after library is available)
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
-          "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.js";
-
-        currentFileName = file.name;
-        progressSection.style.display = "block";
-        previewSection.style.display = "none";
-        downloadBtn.disabled = true;
-        statusText.textContent = "Loading PDF…";
-        progressFill.style.width = "5%";
-
-        try {
-          const arrayBuffer = await file.arrayBuffer();
-          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-          const numPages = pdf.numPages;
-          const scale = parseFloat(scaleSelect.value);
-          const threshold = parseInt(thresholdSlider.value);
-          const minArea = parseInt(minAreaSlider.value);
-
-          const newPdf = await PDFLib.PDFDocument.create();
-
-          let totalDarkPixelsRemoved = 0;
-          let totalPixels = 0;
-
-          for (let i = 1; i <= numPages; i++) {
-            statusText.textContent = `Processing page ${i} of ${numPages}…`;
-            pageStatus.textContent = "Rendering & cleaning…";
-            progressFill.style.width = `${(i / numPages) * 90 + 5}%`;
-
-            const page = await pdf.getPage(i);
-            const viewport = page.getViewport({ scale });
-
-            const canvas = document.createElement("canvas");
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            const ctx = canvas.getContext("2d", { willReadFrequently: true });
-
-            await page.render({ canvasContext: ctx, viewport }).promise;
-
-            let origDataUrl = null;
-            if (i === 1) {
-              origDataUrl = canvas.toDataURL("image/jpeg", 0.85);
-            }
-
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const { cleanedData, removedPixels } = cleanDarkRegions(imageData, threshold, minArea);
-            ctx.putImageData(cleanedData, 0, 0);
-
-            totalDarkPixelsRemoved += removedPixels;
-            totalPixels += canvas.width * canvas.height;
-
-            if (i === 1) {
-              cleanPreview.src = canvas.toDataURL("image/jpeg", 0.85);
-              origPreview.src = origDataUrl;
-            }
-
-            // Convert to PNG bytes
-            const pngBytes = await new Promise((resolve) => {
-              canvas.toBlob((blob) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(new Uint8Array(reader.result));
-                reader.readAsArrayBuffer(blob);
-              }, "image/png");
-            });
-
-            const pngImage = await newPdf.embedPng(pngBytes);
-            const pdfPage = newPdf.addPage([
-              viewport.width / scale,
-              viewport.height / scale
-            ]);
-            pdfPage.drawImage(pngImage, {
-              x: 0,
-              y: 0,
-              width: pdfPage.getWidth(),
-              height: pdfPage.getHeight()
-            });
-          }
-
-          statusText.textContent = "Building final PDF…";
-          progressFill.style.width = "98%";
-          cleanedPdfBytes = await newPdf.save();
-
-          const pct = totalPixels ? ((totalDarkPixelsRemoved / totalPixels) * 100).toFixed(1) : 0;
-          statsBox.style.display = "block";
-          statsBox.innerHTML = `Removed approximately <strong>${totalDarkPixelsRemoved.toLocaleString()}</strong> dark pixels (~${pct}% of the page area).`;
-
-          progressFill.style.width = "100%";
-          statusText.textContent = "Done!";
-          pageStatus.textContent = "";
-          previewSection.style.display = "block";
-          downloadBtn.disabled = false;
-
-        } catch (err) {
-          console.error(err);
-          showError("Error while processing: " + err.message);
-        }
-      }
-
-      function cleanDarkRegions(imageData, darkThreshold, minArea) {
-        const { width, height, data } = imageData;
-        const len = width * height;
-        const visited = new Uint8Array(len);
-        const isDark = new Uint8Array(len);
-        let removed = 0;
-
-        for (let i = 0; i < len; i++) {
-          const idx = i * 4;
-          const lum = 0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2];
-          isDark[i] = lum < darkThreshold ? 1 : 0;
-        }
-
-        const dx = [0, 1, 0, -1];
-        const dy = [-1, 0, 1, 0];
-        const componentPixels = [];
-
-        for (let y = 0; y < height; y++) {
-          for (let x = 0; x < width; x++) {
-            const start = y * width + x;
-            if (!isDark[start] || visited[start]) continue;
-
-            const queue = [start];
-            visited[start] = 1;
-            const pixels = [start];
-
-            while (queue.length) {
-              const p = queue.shift();
-              const px = p % width;
-              const py = (p - px) / width;
-
-              for (let d = 0; d < 4; d++) {
-                const nx = px + dx[d];
-                const ny = py + dy[d];
-                if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
-                const np = ny * width + nx;
-                if (isDark[np] && !visited[np]) {
-                  visited[np] = 1;
-                  queue.push(np);
-                  pixels.push(np);
-                }
-              }
-            }
-            componentPixels.push(pixels);
-          }
-        }
-
-        const result = new ImageData(new Uint8ClampedArray(data), width, height);
-        const out = result.data;
-
-        for (const pixels of componentPixels) {
-          if (pixels.length < minArea) continue;
-
-          let sumLum = 0;
-          for (const p of pixels) {
-            const idx = p * 4;
-            sumLum += 0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2];
-          }
-          if (sumLum / pixels.length > darkThreshold + 15) continue;
-
-          for (const p of pixels) {
-            const idx = p * 4;
-            out[idx] = 255;
-            out[idx + 1] = 255;
-            out[idx + 2] = 255;
-            removed++;
-          }
-        }
-
-        return { cleanedData: result, removedPixels: removed };
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files && fileInput.files.length > 0) {
+        handleFile(fileInput.files[0]);
       }
     });
+
+    // Drag and drop
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.add("dragover");
+    });
+
+    dropZone.addEventListener("dragleave", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.remove("dragover");
+    });
+
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.remove("dragover");
+
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    // Reset button
+    resetBtn.addEventListener("click", () => {
+      progressSection.style.display = "none";
+      previewSection.style.display  = "none";
+      downloadBtn.disabled = true;
+      cleanedPdfBytes = null;
+      fileInput.value = "";
+    });
+
+    // Download button
+    downloadBtn.addEventListener("click", () => {
+      if (!cleanedPdfBytes) return;
+      const blob = new Blob([cleanedPdfBytes], { type: "application/pdf" });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement("a");
+      a.href     = url;
+      a.download = currentFileName.replace(/\.pdf$/i, "") + "_cleaned.pdf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    async function handleFile(file) {
+      if (!file || file.type !== "application/pdf") {
+        alert("Please upload a PDF file.");
+        return;
+      }
+
+      currentFileName = file.name;
+      progressSection.style.display = "block";
+      previewSection.style.display  = "none";
+      downloadBtn.disabled = true;
+      statusText.textContent = "Loading PDF…";
+      progressFill.style.width = "5%";
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const numPages = pdf.numPages;
+        const scale = parseFloat(scaleSelect.value);
+        const threshold = parseInt(thresholdSlider.value);
+        const minArea = parseInt(minAreaSlider.value);
+
+        const { PDFDocument } = PDFLib;
+        const newPdf = await PDFDocument.create();
+
+        let totalDarkPixelsRemoved = 0;
+        let totalPixels = 0;
+
+        for (let i = 1; i <= numPages; i++) {
+          statusText.textContent = `Processing page ${i} of ${numPages}…`;
+          pageStatus.textContent = "Rendering & cleaning…";
+          progressFill.style.width = `${(i / numPages) * 90 + 5}%`;
+
+          const page = await pdf.getPage(i);
+          const viewport = page.getViewport({ scale });
+
+          const canvas = document.createElement("canvas");
+          canvas.width  = viewport.width;
+          canvas.height = viewport.height;
+          const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+          await page.render({ canvasContext: ctx, viewport }).promise;
+
+          // Preview (first page only)
+          let origDataUrl = null;
+          if (i === 1) {
+            origDataUrl = canvas.toDataURL("image/jpeg", 0.85);
+          }
+
+          // Clean dark regions
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const { cleanedData, removedPixels } = cleanDarkRegions(imageData, threshold, minArea);
+          ctx.putImageData(cleanedData, 0, 0);
+
+          totalDarkPixelsRemoved += removedPixels;
+          totalPixels += canvas.width * canvas.height;
+
+          if (i === 1) {
+            cleanPreview.src = canvas.toDataURL("image/jpeg", 0.85);
+            origPreview.src  = origDataUrl;
+          }
+
+          // Convert cleaned canvas → PNG → embed in new PDF
+          const pngBytes = await new Promise(resolve => {
+            canvas.toBlob(blob => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(new Uint8Array(reader.result));
+              reader.readAsArrayBuffer(blob);
+            }, "image/png");
+          });
+
+          const pngImage = await newPdf.embedPng(pngBytes);
+          const pdfPage = newPdf.addPage([
+            viewport.width  / scale,
+            viewport.height / scale
+          ]);
+          pdfPage.drawImage(pngImage, {
+            x: 0,
+            y: 0,
+            width:  pdfPage.getWidth(),
+            height: pdfPage.getHeight()
+          });
+        }
+
+        statusText.textContent = "Building final PDF…";
+        progressFill.style.width = "98%";
+        cleanedPdfBytes = await newPdf.save();
+
+        const pct = totalPixels ? ((totalDarkPixelsRemoved / totalPixels) * 100).toFixed(1) : 0;
+        statsBox.style.display = "block";
+        statsBox.innerHTML = `Removed approximately <strong>${totalDarkPixelsRemoved.toLocaleString()}</strong> dark pixels (~${pct}% of the page area). Ink usage significantly reduced.`;
+
+        progressFill.style.width = "100%";
+        statusText.textContent = "Done!";
+        pageStatus.textContent = "";
+        previewSection.style.display = "block";
+        downloadBtn.disabled = false;
+
+      } catch (err) {
+        console.error(err);
+        statusText.textContent = "Error: " + err.message;
+        alert("Failed to process PDF.\n\n" + err.message);
+      }
+    }
+
+    /**
+     * Detect large solid dark regions and turn them white.
+     * Small components (text, thin lines) are left untouched.
+     */
+    function cleanDarkRegions(imageData, darkThreshold, minArea) {
+      const { width, height, data } = imageData;
+      const len = width * height;
+      const visited = new Uint8Array(len);
+      const isDark  = new Uint8Array(len);
+      let removed = 0;
+
+      // Create dark mask
+      for (let i = 0; i < len; i++) {
+        const idx = i * 4;
+        const lum = 0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2];
+        isDark[i] = lum < darkThreshold ? 1 : 0;
+      }
+
+      // 4-connected component labeling
+      const dx = [0, 1, 0, -1];
+      const dy = [-1, 0, 1, 0];
+      const componentPixels = [];
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const start = y * width + x;
+          if (!isDark[start] || visited[start]) continue;
+
+          const queue = [start];
+          visited[start] = 1;
+          const pixels = [start];
+
+          while (queue.length) {
+            const p = queue.shift();
+            const px = p % width;
+            const py = (p - px) / width;
+
+            for (let d = 0; d < 4; d++) {
+              const nx = px + dx[d];
+              const ny = py + dy[d];
+              if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+              const np = ny * width + nx;
+              if (isDark[np] && !visited[np]) {
+                visited[np] = 1;
+                queue.push(np);
+                pixels.push(np);
+              }
+            }
+          }
+          componentPixels.push(pixels);
+        }
+      }
+
+      // Fill large dark components with white
+      const result = new ImageData(new Uint8ClampedArray(data), width, height);
+      const out = result.data;
+
+      for (const pixels of componentPixels) {
+        if (pixels.length < minArea) continue;
+
+        // Safety: make sure the region is still dark on average
+        let sumLum = 0;
+        for (const p of pixels) {
+          const idx = p * 4;
+          sumLum += 0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2];
+        }
+        if (sumLum / pixels.length > darkThreshold + 15) continue;
+
+        for (const p of pixels) {
+          const idx = p * 4;
+          out[idx]     = 255;
+          out[idx + 1] = 255;
+          out[idx + 2] = 255;
+          removed++;
+        }
+      }
+
+      return { cleanedData: result, removedPixels: removed };
+    }
   </script>
 </body>
 </html>
